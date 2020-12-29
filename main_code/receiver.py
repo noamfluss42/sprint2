@@ -76,7 +76,7 @@ class Camera():
 
 
 def main():
-    cam = Camera(DANIEL)
+    cam = Camera(ARAZY)
 
     print("Camera is alive?: " + str(cam.p.is_alive()))
 

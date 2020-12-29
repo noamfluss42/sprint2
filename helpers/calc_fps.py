@@ -4,7 +4,7 @@ import time
 
 
 def main():
-    cam = Camera(DANIEL)
+    cam = Camera(ARAZY)
 
     # print("Camera is alive?: " + str(cam.p.is_alive()))
     # timeout variable can be omitted, if you use specific value in the while condition
@@ -12,7 +12,7 @@ def main():
 
     timeout = 20  # [seconds]
     timeout_start = time.time()
-    while time.time() < timeout_start + timeout:
+    while time.time() <= timeout_start + timeout:
         frame = cam.get_frame()
         count += 1
     print(count)
@@ -23,6 +23,7 @@ def main():
 
 
 if __name__ == '__main__':
-    for i in range(10):
-        main()
-        time.sleep(5)
+    main()
+    #for i in range(10):
+    #    main()
+    #    time.sleep(2)
