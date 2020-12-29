@@ -55,12 +55,13 @@ class CropImage:
     def get_masks(self):
         return self.masks
 
+
 class FakeCamera:
     def __init__(self, *args):
         pass
 
     def get_frame(self):
-        f = cv2.imread(r'Screenshot 2020-12-29 145155.png')
+        f = cv2.imread(r'img2.png')
         return f[-480:, :640]
 
     def end(self):
