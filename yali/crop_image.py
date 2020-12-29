@@ -7,24 +7,23 @@ class CropImage:
     WINDOW_NAME = f"{ARAZY}"
     MASK = 'mask'
     R = 3
-    mask = np.zeros((480, 640), np.uint8)
+    masks = []
+    leds_counter = -1
 
     def __init__(self):
         self.frame = None
 
     def run(self):
-        cam = Camera(ARAZY)
+        cam = FakeCamera(ARAZY)
         cv2.namedWindow(self.WINDOW_NAME)
-        cv2.namedWindow(self.MASK)
         cv2.setMouseCallback(self.WINDOW_NAME, self.click)
 
         while True:
-            f = cv2.imread(r'Screenshot 2020-12-29 145155.png')
-            self.frame = f[-480:, :640]  #cam.get_frame()
+            self.frame = cam.get_frame()
 
             # Display the resulting frame
             cv2.imshow(self.WINDOW_NAME, self.frame)
-            cv2.imshow(self.MASK, self.mask)
+            self.show_cropped()
 
             key = cv2.waitKey(1)
             if key == 13:  # 13 is the Enter Key
@@ -40,11 +39,30 @@ class CropImage:
 
         # check to see if the left mouse button was released
         elif event == cv2.EVENT_RBUTTONUP:
-            self.crop(x, y, False)
+            pass  # self.crop(x, y, False)
 
     def crop(self, x, y, crop):
+        self.leds_counter += 1 if crop else -1
         r = self.R if crop else int(1.5*self.R)
-        self.mask[y-r:y+r, x-r:x+r] = 255 if crop else 0
+        mask = np.zeros((480, 640), np.uint8)
+        mask[y-r:y+r, x-r:x+r] = 255 if crop else 0
+        self.masks.append(mask)
+
+    def show_cropped(self):
+        gray_frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        return [cv2.imshow(f"{self.MASK}{self.leds_counter}", cv2.bitwise_and(gray_frame, mask)) for mask in self.masks]
+
+
+class FakeCamera:
+    def __init__(self, *args):
+        pass
+
+    def get_frame(self):
+        f = cv2.imread(r'Screenshot 2020-12-29 145155.png')
+        return f[-480:, :640]
+
+    def end(self):
+        pass
 
 
 if __name__ == '__main__':
