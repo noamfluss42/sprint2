@@ -2,24 +2,25 @@ from main_code.receiver import *
 import numpy as np
 
 
-class CropImage:
+class RecognizeLed:
 
     WINDOW_NAME = f"{ARAZY}"
     MASK = 'mask'
-    R = 3
+    R = 6
     masks = []
+    brightness = []
     leds_counter = -1
 
-    def __init__(self):
+    def __init__(self, cam):
+        self.cam = cam
         self.frame = None
 
     def run(self):
-        cam = FakeCamera(ARAZY)
         cv2.namedWindow(self.WINDOW_NAME)
         cv2.setMouseCallback(self.WINDOW_NAME, self.click)
 
         while True:
-            self.frame = cam.get_frame()
+            self.frame = self.cam.get_frame()
 
             # Display the resulting frame
             cv2.imshow(self.WINDOW_NAME, self.frame)
@@ -30,7 +31,6 @@ class CropImage:
                 break
 
         cv2.destroyAllWindows()
-        cam.end()
 
     def click(self, event, x, y, *args):
         # check to see if the left mouse button was released
@@ -39,14 +39,19 @@ class CropImage:
 
         # check to see if the left mouse button was released
         elif event == cv2.EVENT_RBUTTONUP:
-            pass  # self.crop(x, y, False)
+            self.crop(x, y, False)
 
-    def crop(self, x, y, crop):
-        self.leds_counter += 1 if crop else -1
-        r = self.R if crop else int(1.5*self.R)
+    def crop(self, x, y, light):
+        self.leds_counter += 1
+        r = self.R
+        cropped = self.frame[y-r:y+r, x-r:x+r]
+
         mask = np.zeros((480, 640), np.uint8)
-        mask[y-r:y+r, x-r:x+r] = 255 if crop else 0
+        mask[y-r:y+r, x-r:x+r] = 255 if light else 0
         self.masks.append(mask)
+
+    def avg_brightness(self):
+        pass
 
     def show_cropped(self):
         gray_frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
@@ -61,13 +66,8 @@ class FakeCamera:
         pass
 
     def get_frame(self):
-        f = cv2.imread(r'img2.png')
+        f = cv2.imread(r'Screenshot 2020-12-29 145155.png')
         return f[-480:, :640]
 
     def end(self):
         pass
-
-
-if __name__ == '__main__':
-    c = CropImage()
-    c.run()
