@@ -87,6 +87,8 @@ def main():
 
         key = cv2.waitKey(1)
 
+        cv2.imwrite("first74.png",frame)
+        exit()
         if key == 13:  # 13 is the Enter Key
             break
 

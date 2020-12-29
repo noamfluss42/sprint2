@@ -54,7 +54,7 @@ class CropImage:
 
     def get_masks(self):
         return self.masks
-
+    
 class FakeCamera:
     def __init__(self, *args):
         pass
