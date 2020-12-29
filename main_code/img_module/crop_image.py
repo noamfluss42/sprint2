@@ -3,7 +3,6 @@ import numpy as np
 
 
 class RecognizeLed:
-
     WINDOW_NAME = f"{ARAZY}"
     MASK = 'mask'
     R = 3
@@ -43,9 +42,9 @@ class RecognizeLed:
 
     def crop(self, x, y, crop):
         self.leds_counter += 1 if crop else -1
-        r = self.R if crop else int(1.5*self.R)
+        r = self.R if crop else int(1.5 * self.R)
         mask = np.zeros((480, 640), np.uint8)
-        mask[y-r:y+r, x-r:x+r] = 255 if crop else 0
+        mask[y - r:y + r, x - r:x + r] = 255 if crop else 0
         self.masks.append(mask)
 
     def show_cropped(self):
@@ -54,7 +53,8 @@ class RecognizeLed:
 
     def get_masks(self):
         return self.masks
-    
+
+
 class FakeCamera:
     def __init__(self, *args):
         pass
@@ -70,3 +70,6 @@ class FakeCamera:
 if __name__ == '__main__':
     c = RecognizeLed()
     c.run()
+    masks = c.get_masks()
+    for mask_index in range(len(masks)):
+        cv2.imwrite("mask" + str(mask_index) + ".png", masks[mask_index])
