@@ -2,7 +2,7 @@ from main_code.receiver import *
 import numpy as np
 
 
-class CropImage:
+class RecognizeLed:
 
     WINDOW_NAME = f"{ARAZY}"
     MASK = 'mask'
@@ -13,8 +13,8 @@ class CropImage:
     def __init__(self):
         self.frame = None
 
-    def run(self):
-        cam = FakeCamera(ARAZY)
+    def run(self, cam):
+
         cv2.namedWindow(self.WINDOW_NAME)
         cv2.setMouseCallback(self.WINDOW_NAME, self.click)
 
@@ -68,5 +68,5 @@ class FakeCamera:
 
 
 if __name__ == '__main__':
-    c = CropImage()
+    c = RecognizeLed()
     c.run()
