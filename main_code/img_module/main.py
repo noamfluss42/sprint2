@@ -4,8 +4,6 @@ from main_code.img_module.crop_image import *
 from main_code.img_module.create_sequence import *
 
 
-def calc_brightness(image: np.ndarray) -> float:
-    return np.average(image)
 
 
 def main():
@@ -14,8 +12,7 @@ def main():
     recognizer = RecognizeLed(cam)
     recognizer.run()
 
-    create_sequence(cam, recognizer.masks)
-
+    print(create_sequence(cam, recognizer.masks, recognizer.get_threshold()))
 
 
 if __name__ == '__main__':

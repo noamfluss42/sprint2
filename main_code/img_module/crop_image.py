@@ -1,6 +1,9 @@
-from main_code.img_module.main import calc_brightness
 from main_code.receiver import *
 import numpy as np
+
+
+def calc_brightness(image: np.ndarray) -> float:
+    return np.average(image)
 
 
 class RecognizeLed:
@@ -22,18 +25,17 @@ class RecognizeLed:
 
         while True:
             self.frame = self.cam.get_frame()
-
-            # Display the resulting frame
+            # Display the resulting fra me
             cv2.imshow(self.WINDOW_NAME, self.frame)
             self.show_cropped()
 
             key = cv2.waitKey(1)
             if key == 13:  # 13 is the Enter Key
                 break
-
         cv2.destroyAllWindows()
 
     def click(self, event, x, y, *args):
+
         # check to see if the left mouse button was released
         if event == cv2.EVENT_LBUTTONUP:
             self.crop(x, y)
@@ -43,13 +45,20 @@ class RecognizeLed:
             self.crop(x, y, True)
 
     def crop(self, x, y, leds_off=False):
+        print("enter crop ",leds_off)
         self.leds_counter += 1
         r = self.R
-        self.brightness_values(self.frame[y-r:y+r, x-r:x+r], leds_off)
+        # self.brightness_values(self.frame[y - r:y + r, x - r:x + r], leds_off)
 
         mask = np.zeros((480, 640), np.uint8)
-        mask[y-r:y+r, x-r:x+r] = 255
-        self.masks.append(mask)
+        mask[y - r:y + r, x - r:x + r] = 255
+
+        a = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        b = cv2.bitwise_and(a,mask)
+        self.brightness_values(
+            cv2.bitwise_and(cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY), mask),leds_off)
+        if not leds_off:
+            self.masks.append(mask)
 
     def brightness_values(self, cropped, leds_off):
         brightness = calc_brightness(cropped)
@@ -65,21 +74,38 @@ class RecognizeLed:
     def get_masks(self):
         return self.masks
 
+    def get_threshold(self):
+        print(self.bright_values)
+        print(self.dark_values)
+        return (np.array(self.bright_values) + np.array(self.dark_values)) / 2
+
 
 class FakeCamera:
     def __init__(self, *args):
-        pass
+        self.i = 0
+
+    def add(self):
+        self.i += 1
 
     def get_frame(self):
-        f = cv2.imread(r'Screenshot 2020-12-29 145155.png')
-        return f[-480:, :640]
+        if self.i == 0:
+            f = cv2.imread('img3.png')
+            return f[-480:, :640]
+        if self.i == 1:
+            f = cv2.imread('img2.png')
+            return f[-480:, :640]
+        if self.i == 2:
+            f = cv2.imread('img3.png')
+            return f[-480:, :640]
 
     def end(self):
         pass
 
 
 if __name__ == '__main__':
-    c = RecognizeLed(None)
+
+    cam = FakeCamera(ARAZY)
+    c = RecognizeLed(cam)
     c.run()
     masks = c.get_masks()
     for mask_index in range(len(masks)):
