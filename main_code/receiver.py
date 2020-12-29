@@ -26,9 +26,9 @@ class Camera():
     def update(self, conn, rtsp_url):
         # load cam into seperate process
 
-        print("Cam Loading...")
+        #print("Cam Loading...")
         cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
-        print("Cam Loaded...")
+        #print("Cam Loaded...")
         run = True
 
         while run:
@@ -76,7 +76,7 @@ class Camera():
 
 
 def main():
-    cam = Camera(ARAZY)
+    cam = Camera(DANIEL)
 
     print("Camera is alive?: " + str(cam.p.is_alive()))
 
